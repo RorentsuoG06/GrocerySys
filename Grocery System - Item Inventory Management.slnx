@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="Grocery System - Item Inventory Management.csproj" />
+  <Project Path="GrocerySysAppService/GrocerySysAppService.csproj" Id="ab44f5e8-b43f-4956-9cf6-14cc95e1b30a" />
+  <Project Path="GrocerySysDataService/GrocerySysDataService.csproj" Id="b24ba021-bced-4b52-b316-05da9ee7e225" />
+  <Project Path="GrocerySysModels/GrocerySysModels.csproj" Id="a4376a82-5688-4ae5-a2d6-86973143b472" />
 </Solution>

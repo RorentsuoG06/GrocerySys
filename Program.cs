@@ -1,18 +1,16 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using GrocerySysModels;
+using GrocerySysAppService;
 
 namespace Grocery_System___Item_Inventory_Management
 {
     internal class Program
     {
-        static int choice = 0;
-        static int item_id = 0, item_quantity = 0;
-        static string item_name = "", item_location = "", choiceContinue = "", newName = "", newQuantity = "", newLocation = "";
-        static List<string> itemList = new List<string>();
+        static GroceryAppService appService = new GroceryAppService();
         static void Main(string[] args)
         {
             Console.WriteLine("Grocery System - Item Inventory Management");
             CRUD_Feature();
-
         }
 
         static void CRUD_Feature()
@@ -32,7 +30,7 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("[5] Delete Item");
                 Console.Write("Choice: ");
 
-                choice = Convert.ToInt16(Console.ReadLine());
+                int choice = Convert.ToInt16(Console.ReadLine());
 
 
                 switch (choice)
@@ -56,8 +54,9 @@ namespace Grocery_System___Item_Inventory_Management
                         Console.WriteLine("You have entered a choice that is not in the list, please try again.");
                         break;
                 }
+                lowItemNotification();
                 Console.Write("Do you want to continue? y/n: ");
-                choiceContinue = Console.ReadLine().ToUpper();
+                string choiceContinue = Console.ReadLine().ToUpper();
                 if (choiceContinue == "Y" || choiceContinue == "YES")
                 {
                     isContinue = true;
@@ -83,139 +82,102 @@ namespace Grocery_System___Item_Inventory_Management
                          Item_Location
                          */
 
-            Console.WriteLine("Item ID: ");
-            item_id = Convert.ToInt16(Console.ReadLine());
-            Console.WriteLine("Item Name: ");
-            item_name = Console.ReadLine();
-            Console.WriteLine("Item Quantity: ");
-            item_quantity = Convert.ToInt16(Console.ReadLine());
-            Console.WriteLine("Item Location");
-            item_location = Console.ReadLine();
+            Console.Write("Item ID: ");
+            int item_id = Convert.ToInt16(Console.ReadLine());
+            Console.Write("Item Name: ");
+            string item_name = Console.ReadLine();
+            Console.Write("Item Quantity: ");
+            int item_quantity = Convert.ToInt16(Console.ReadLine());
+            Console.Write("Item Location");
+            string item_location = Console.ReadLine();
 
-            addItems(item_id, item_name, item_quantity, item_location);
+            appService.addItems(item_id, item_name, item_quantity, item_location);
             Console.WriteLine("Item Added Successfuly!");
-        }
-
-        static void addItems(int id, string name, int quantity, string location)
-        {
-            itemList.Add($"Item ID: {item_id}, Item Name: {item_name}, Item Quantity: {item_quantity}, Item Location: {item_location} ");
         }
 
         static void displayItems()
         {
             Console.WriteLine("Current List of Items: ");
-            foreach (var item in itemList)
+            var items = appService.GetItems();
+            foreach (var item in items)
             {
-                Console.WriteLine(item);
+                Console.WriteLine($"Item ID: {item.ItemId} Item Name: {item.ItemName} Item Quantity: {item.ItemQuantity} Item Location: {item.ItemLocation}");
             }
         }
 
         static void searchItems()
         {
-            Console.WriteLine("Item ID: ");
-            item_id = Convert.ToInt16(Console.ReadLine());
+            Console.Write("Item ID: ");
+            int item_id = Convert.ToInt16(Console.ReadLine());
 
-            var foundItem = itemList.Find(x => x.Contains($"Item ID: {item_id},"));
+            var item = appService.FindItem(item_id);
 
-            if (foundItem != null)
+            if (item != null)
             {
-                Console.WriteLine("Item Found:");
-                Console.WriteLine(foundItem);
+                Console.WriteLine($"Found Item: {item.ItemId} | {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation}");
             }
             else
             {
                 Console.WriteLine("Item not found.");
             }
-
         }
 
         static void updateItems()
         {
-            newName = "";
-            newQuantity = "";
-            newLocation = "";
-
-            Console.Write("Item ID: ");
-            item_id = Convert.ToInt16(Console.ReadLine());
-
-            int index = itemList.FindIndex(x => x.Contains($"Item ID: {item_id},"));
-            if (index == -1)
-            {
-                Console.WriteLine("Item not found.");
-                return;
-            }
+          
+           Console.Write("Item ID: ");
+           int item_id = Convert.ToInt16(Console.ReadLine());
 
             Console.WriteLine("Item Found: ");
-            Console.WriteLine(itemList[index]);
+            var item = appService.FindItem(item_id);
 
-            Console.WriteLine("\nWhat do you want to update?");
-            Console.WriteLine("[1] Item Name");
-            Console.WriteLine("[2] Item Quantity");
-            Console.WriteLine("[3] Item Location");
-            Console.Write("Choice: ");
-            int updatedChoice = Convert.ToInt16(Console.ReadLine());
+                if (item != null)
+                {
+                    Console.WriteLine("\nWhat do you want to update?");
+                    Console.WriteLine("[1] Item Name");
+                    Console.WriteLine("[2] Item Quantity");
+                    Console.WriteLine("[3] Item Location");
+                    Console.Write("Choice: ");
+                    int updateChoice = Convert.ToInt16(Console.ReadLine());
 
-            if (updatedChoice == 1)
-            {
-                Console.Write("New Item Name: ");
-                newName = Console.ReadLine();
-            }
-            else if (updatedChoice == 2)
-            {
-                Console.Write("New Item Quantity: ");
-                newQuantity = Console.ReadLine();
-            }
-            else if (updatedChoice == 3)
-            {
-                Console.Write("New Item Location: ");
-                newLocation = Console.ReadLine();
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice.");
-                return;
-            }
-
-            string current = itemList[index];
-
-            string oldName = GetValue(current, "Item Name: ", ", Item Quantity:");
-            string oldQty = GetValue(current, "Item Quantity: ", ", Item Location:");
-            string oldLoc = GetValue(current, "Item Location: ", " ");
-
-            if (!string.IsNullOrWhiteSpace(newName)) oldName = newName;
-            if (!string.IsNullOrWhiteSpace(newQuantity)) oldQty = newQuantity;
-            if (!string.IsNullOrWhiteSpace(newLocation)) oldLoc = newLocation;
-
-            itemList[index] = $"Item ID: {item_id}, Item Name: {oldName}, Item Quantity: {oldQty}, Item Location: {oldLoc} ";
-
-            Console.WriteLine("Item Updated Successfully!");
-            Console.WriteLine(itemList[index]);
+                    if (updateChoice == 1)
+                    {
+                        Console.Write("New Item Name: ");
+                        string newName = Console.ReadLine();
+                        appService.UpdateItemName(item_id, newName);
+                    }
+                    else if (updateChoice == 2)
+                    {
+                        Console.Write("New Item Quantity: ");
+                        string quantityInput = Console.ReadLine();
+                        int? newQuantity = string.IsNullOrWhiteSpace(quantityInput) ? null : Convert.ToInt16(quantityInput);
+                        appService.UpdateItemQuantity(item_id, newQuantity);
+                    }
+                    else if (updateChoice == 3)
+                    {
+                        Console.Write("New Item Location: ");
+                        string newLocation = Console.ReadLine();
+                        appService.UpdateItemLocation(item_id, newLocation);    
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice.");
+                        return;
+                    }
+                }
+          
         }
 
-        static string GetValue(string source, string start, string end)
-            {
-                int startIndex = source.IndexOf(start);
-                if (startIndex == -1) return "";
-
-                startIndex += start.Length;
-                int endIndex = source.IndexOf(end, startIndex);
-                if (endIndex == -1) endIndex = source.Length;
-
-                return source.Substring(startIndex, endIndex - startIndex).Trim();
-            }
-        
-       
         static void deleteItems()
         {
-            Console.WriteLine("Item ID: ");
-            item_id = Convert.ToInt16(Console.ReadLine());
+           Console.WriteLine("Item ID: ");
+           int item_id = Convert.ToInt16(Console.ReadLine());
 
-            var foundItem = itemList.Find(x => x.Contains($"Item ID: {item_id},"));
+            bool deleted = appService.DeleteItem(item_id);
 
-            if (foundItem != null)
+            if (deleted)
             {
-                Console.WriteLine("Item Deleted:");
-                itemList.Remove(foundItem);
+                Console.WriteLine("Item sucessfully deleted.");
             }
             else
             {
@@ -225,7 +187,19 @@ namespace Grocery_System___Item_Inventory_Management
 
         static void lowItemNotification()
         {
+            bool ite = appService.HasLowStockItems();
 
+            if (ite)
+            {
+                var items = appService.GetLowStockItems();
+                Console.WriteLine("Low Stock Items (< 5): ");
+
+                foreach (var item in items)
+                {
+                    Console.WriteLine($"ID: {item.ItemId} | Name: {item.ItemName} | Qty: {item.ItemQuantity}");
+                }
+            }
+           
         }
     }
 }

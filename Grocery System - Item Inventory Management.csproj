@@ -8,4 +8,21 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="GrocerySysAppService\**" />
+    <Compile Remove="GrocerySysDataService\**" />
+    <Compile Remove="GrocerySysModels\**" />
+    <EmbeddedResource Remove="GrocerySysAppService\**" />
+    <EmbeddedResource Remove="GrocerySysDataService\**" />
+    <EmbeddedResource Remove="GrocerySysModels\**" />
+    <None Remove="GrocerySysAppService\**" />
+    <None Remove="GrocerySysDataService\**" />
+    <None Remove="GrocerySysModels\**" />
+  </ItemGroup>
+
+ 
+
+  <ItemGroup>    <ProjectReference Include="GrocerySysAppService\GrocerySysAppService.csproj" />    <ProjectReference Include="GrocerySysModels\GrocerySysModels.csproj" />
+  </ItemGroup>
+
 </Project>
