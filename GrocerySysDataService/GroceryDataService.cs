@@ -1,36 +1,36 @@
 ﻿using GrocerySysModels;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace GrocerySysDataService
 {
     public class GroceryDataService
     {
-        List<Items> itemList = new List<Items>();
-        
+        IGroceryDataService _dataService;
+        public GroceryDataService(IGroceryDataService dataService) 
+        {
+            _dataService = dataService;
+        }
+
         public void AddItem(Items item)
         {
-            itemList.Add(item);
+            _dataService.AddItem(item);
         }
 
         public List<Items> GetItems()
         {
-            return itemList;
+            return _dataService.GetItems();
         }
 
         public Items FindItem(int id)
         {
-            return itemList.FirstOrDefault(x => x.ItemId == id);
+            return _dataService.FindItem(id);
         }
 
         public bool DeleteItem(int id)
         {
-            var item = FindItem(id);
-
-            if (item == null)
-            {
-                return false;
-            }
-
-            itemList.Remove(item);
-            return true;
+            return _dataService.DeleteItem(id);
         }
     }
 }

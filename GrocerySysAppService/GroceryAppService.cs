@@ -1,12 +1,11 @@
-﻿using GrocerySysModels;
+﻿﻿using GrocerySysModels;
 using GrocerySysDataService;
 
 namespace GrocerySysAppService
 {
     public class GroceryAppService
     {
-            GroceryDataService dataService = new GroceryDataService();
-        
+        IGroceryDataService dataService = new GroceryDBData();
         public void addItems(int id, string name, int quantity, string location)
         {   
             Items item = new Items();
@@ -27,49 +26,17 @@ namespace GrocerySysAppService
         }
         public bool UpdateItemName(int id, string newName)
         {
-            var item = dataService.FindItem(id);
-
-            if(item == null)
-            {
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(newName))
-            {
-                item.ItemName = newName;
-            }
-            return true;
+            return dataService.UpdateItemName(id, newName);
         }
 
         public bool UpdateItemQuantity(int id, int? newQuantity)
         {
-            var item = dataService.FindItem(id);
-
-            if (item == null)
-            {
-                return false;
-            }
-            if (newQuantity.HasValue)
-            {
-                item.ItemQuantity = newQuantity.Value;
-            }
-
-            return true;
+            return dataService.UpdateItemQuantity(id, newQuantity);
         }
 
         public bool UpdateItemLocation(int id, string newLocation)
         {
-            var item = dataService.FindItem(id);
-
-            if (item == null)
-            {
-                return false;
-            }
-            if (!string.IsNullOrWhiteSpace(newLocation))
-            {
-                item.ItemLocation = newLocation;
-            }
-            return true;
+           return dataService.UpdateItemLocation(id, newLocation); 
         }
 
         public bool DeleteItem(int id)
