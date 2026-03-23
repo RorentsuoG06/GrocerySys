@@ -129,8 +129,9 @@ namespace Grocery_System___Item_Inventory_Management
             Console.Write("Item ID: ");
             int item_id = Convert.ToInt16(Console.ReadLine());
 
-            Console.WriteLine("Item Found: ");
+            
             var item = appService.FindItem(item_id);
+            Console.WriteLine($"Item Found: {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation} ");
 
             if (item != null)
             {

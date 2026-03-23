@@ -121,7 +121,7 @@ namespace GrocerySysDataService
         public bool UpdateItemQuantity(int id, int? newQuantity)
         {
             if (!newQuantity.HasValue)
-                return false; // nothing to update
+                return false; 
 
             string updateStmt = "UPDATE Items SET ItemQuantity = @ItemQuantity WHERE ItemId = @ItemId";
             SqlCommand cmd = new SqlCommand(updateStmt, sqlConnection);
@@ -154,7 +154,6 @@ namespace GrocerySysDataService
 
         public bool DeleteItem(int id)
         {
-            // Check if item exists first
             var item = FindItem(id);
             if (item == null)
                 return false;
