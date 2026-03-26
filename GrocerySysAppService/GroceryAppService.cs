@@ -5,7 +5,7 @@ namespace GrocerySysAppService
 {
     public class GroceryAppService
     {
-        IGroceryDataService dataService = new GroceryDBData();
+        GroceryDataService dataService = new GroceryDataService(new GroceryDBData());
         public void addItems(int id, string name, int quantity, string location)
         {   
             Items item = new Items();
