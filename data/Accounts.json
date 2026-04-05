@@ -1,0 +1,44 @@
+{
+  "AdminAccounts": [
+    {
+      "AccountID": "a5812044-ebe2-431b-84fa-8bdb76021dcb",
+      "Username": "admin",
+      "Password": "admin123!",
+      "Role": "Admin"
+    }
+  ],
+  "EmployeeAccounts": [
+    {
+      "AccountID": "93ad2b95-bbc6-468b-991a-d493528efbec",
+      "Username": "emp",
+      "Password": "emp123!",
+      "Role": "Employee"
+    }
+  ],
+  "AccessLogs": [
+    {
+      "Username": "admin",
+      "Password": "admin123!",
+      "Role": null,
+      "Status": true
+    },
+    {
+      "Username": "emp",
+      "Password": "emp123!",
+      "Role": null,
+      "Status": true
+    },
+    {
+      "Username": "admin",
+      "Password": "admin123!",
+      "Role": "Admin",
+      "Status": true
+    },
+    {
+      "Username": "emp",
+      "Password": "emp123!",
+      "Role": "Employee",
+      "Status": true
+    }
+  ]
+}

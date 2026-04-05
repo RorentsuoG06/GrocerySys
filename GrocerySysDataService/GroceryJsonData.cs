@@ -25,9 +25,9 @@ namespace GrocerySysDataService
             
             if (itemList.Count <= 0)
             {
-                itemList.Add(new Items {ItemId = 1, ItemName = "Apple", ItemLocation = "Shelf A", ItemQuantity = 6});
-                itemList.Add(new Items {ItemId = 2, ItemName = "Mango", ItemLocation = "Shelf B", ItemQuantity = 7});
-                itemList.Add(new Items {ItemId = 3, ItemName = "Orange", ItemLocation = "Shelf C", ItemQuantity = 8});
+                itemList.Add(new Items { ItemId = "0001", ItemName = "Apple", ItemLocation = "Shelf A", ItemQuantity = 6});
+                itemList.Add(new Items { ItemId = "0002", ItemName = "Mango", ItemLocation = "Shelf B", ItemQuantity = 7});
+                itemList.Add(new Items { ItemId = "0003", ItemName = "Orange", ItemLocation = "Shelf C", ItemQuantity = 8});
 
                 SaveDataToJsonFile();
             }
@@ -58,6 +58,7 @@ namespace GrocerySysDataService
         public void AddItem(Items item)
         {
             itemList.Add(item);
+            SaveDataToJsonFile();
         }
 
         public List<Items> GetItems()
@@ -65,12 +66,12 @@ namespace GrocerySysDataService
             return itemList;
         }
 
-        public Items FindItem(int id)
+        public Items FindItem(string id)
         {
-            return itemList.FirstOrDefault(x => x.ItemId == id);
+            return itemList.FirstOrDefault(x => x.ItemId.Equals(id));
         }
 
-        public bool UpdateItemName(int id, string newName)
+        public bool UpdateItemName(string id, string newName)
         {
             var item = FindItem(id);
 
@@ -82,11 +83,12 @@ namespace GrocerySysDataService
             if (!string.IsNullOrWhiteSpace(newName))
             {
                 item.ItemName = newName;
+                SaveDataToJsonFile();
             }
             return true;
         }
 
-        public bool UpdateItemQuantity(int id, int? newQuantity)
+        public bool UpdateItemQuantity(string id, int? newQuantity)
         {
             var item = FindItem(id);
 
@@ -97,12 +99,13 @@ namespace GrocerySysDataService
             if (newQuantity.HasValue)
             {
                 item.ItemQuantity = newQuantity.Value;
+                SaveDataToJsonFile();
             }
 
             return true;
         }
 
-        public bool UpdateItemLocation(int id, string newLocation)
+        public bool UpdateItemLocation(string id, string newLocation)
         {
             var item = FindItem(id);
 
@@ -113,10 +116,11 @@ namespace GrocerySysDataService
             if (!string.IsNullOrWhiteSpace(newLocation))
             {
                 item.ItemLocation = newLocation;
+                SaveDataToJsonFile();
             }
             return true;
         }
-        public bool DeleteItem(int id)
+        public bool DeleteItem(string id)
         {
             var item = FindItem(id);
 
@@ -126,6 +130,7 @@ namespace GrocerySysDataService
             }
 
             itemList.Remove(item);
+            SaveDataToJsonFile();
             return true;
         }
     }

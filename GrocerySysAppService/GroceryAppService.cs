@@ -6,10 +6,14 @@ namespace GrocerySysAppService
     public class GroceryAppService
     {
         GroceryDataService dataService = new GroceryDataService(new GroceryDBData());
-        public void addItems(int id, string name, int quantity, string location)
-        {   
+        
+        public void addItems(string name, int quantity, string location)
+        {
             Items item = new Items();
-            item.ItemId = id;
+            var items = dataService.GetItems();
+
+            string newId = GenerateItemId(items);
+            item.ItemId = newId;
             item.ItemName = name;
             item.ItemQuantity = quantity;
             item.ItemLocation = location;  
@@ -20,26 +24,26 @@ namespace GrocerySysAppService
             return dataService.GetItems(); 
         }
 
-        public Items FindItem(int id)
+        public Items FindItem(string id)
         {
             return dataService.FindItem(id);
         }
-        public bool UpdateItemName(int id, string newName)
+        public bool UpdateItemName(string id, string newName)
         {
             return dataService.UpdateItemName(id, newName);
         }
 
-        public bool UpdateItemQuantity(int id, int? newQuantity)
+        public bool UpdateItemQuantity(string id, int? newQuantity)
         {
             return dataService.UpdateItemQuantity(id, newQuantity);
         }
 
-        public bool UpdateItemLocation(int id, string newLocation)
+        public bool UpdateItemLocation(string id, string newLocation)
         {
            return dataService.UpdateItemLocation(id, newLocation); 
         }
 
-        public bool DeleteItem(int id)
+        public bool DeleteItem(string id)
         {
             return dataService.DeleteItem(id);
         }
@@ -51,6 +55,20 @@ namespace GrocerySysAppService
         public bool HasLowStockItems()
         {
             return dataService.GetItems().Any(x => x.ItemQuantity < 5);
+        }
+
+        public string GenerateItemId(List<Items> items)
+        {
+            if (items.Count == 0)
+                return "0001";
+
+            int maxId = items
+                .Where(i => !string.IsNullOrEmpty(i.ItemId)) 
+                .Select(i => int.TryParse(i.ItemId, out int num) ? num : 0) 
+                .DefaultIfEmpty(0) 
+                .Max();
+
+            return (maxId + 1).ToString("D4");
         }
     }
 }

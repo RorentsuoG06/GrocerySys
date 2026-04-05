@@ -11,14 +11,14 @@ namespace GrocerySysDataService
 
         public List<Items> GetItems();
 
-        public Items FindItem(int id);
+        public Items FindItem(string id);
 
-        public bool DeleteItem(int id);
+        public bool DeleteItem(string id);
 
-        public bool UpdateItemName(int id, string newName);
+        public bool UpdateItemName(string id, string newName);
 
-        public bool UpdateItemQuantity(int id, int? newQuantity);
+        public bool UpdateItemQuantity(string id, int? newQuantity);
 
-        public bool UpdateItemLocation(int id, string newLocation);
+        public bool UpdateItemLocation(string id, string newLocation);
     }
 }

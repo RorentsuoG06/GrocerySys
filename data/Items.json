@@ -1,0 +1,26 @@
+[
+  {
+    "ItemId": 1,
+    "ItemName": "Apple",
+    "ItemQuantity": 6,
+    "ItemLocation": "Shelf A"
+  },
+  {
+    "ItemId": 2,
+    "ItemName": "Mango",
+    "ItemQuantity": 7,
+    "ItemLocation": "Shelf B"
+  },
+  {
+    "ItemId": 3,
+    "ItemName": "Orange",
+    "ItemQuantity": 8,
+    "ItemLocation": "Shelf C"
+  },
+  {
+    "ItemId": 4,
+    "ItemName": "Milk",
+    "ItemQuantity": 10,
+    "ItemLocation": "Shelf A"
+  }
+]

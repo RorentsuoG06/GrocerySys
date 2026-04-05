@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using GrocerySysModels;
+﻿using GrocerySysModels;
 using GrocerySysAppService;
 
 namespace Grocery_System___Item_Inventory_Management
@@ -7,27 +6,186 @@ namespace Grocery_System___Item_Inventory_Management
     internal class Program
     {
         static GroceryAppService appService = new GroceryAppService();
+        static AccountAppService accountAppService = new AccountAppService();
         static void Main(string[] args)
         {
             Console.WriteLine("Grocery System - Item Inventory Management");
-            CRUD_Feature();
+
+            bool isLogin = LoginOption();
+
+            while (isLogin)
+            {
+                Login();
+
+                isLogin = LoginOption();
+            }
         }
 
-        static void CRUD_Feature()
+        static bool LoginOption()
         {
-            bool isContinue = false;
+            bool isLogin = false;
+            Console.Write("Do you want to login? y/n: ");
+            string loginInput = Console.ReadLine();
 
+            switch (loginInput)
+            {
+                case "y":
+                    isLogin = true;
+                    break;
+                case "n":
+                    isLogin = false;
+                    Console.WriteLine("System Shutdown.");
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Incorrect Input. The system will now exit.");
+                    Environment.Exit(0);
+                    break;
+            }
+
+            return isLogin;
+        }
+
+        static void Login()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Console.Write("Enter username: ");
+                string usernameInput = Console.ReadLine();
+                Console.Write("Enter password: ");
+                string passwordInput = Console.ReadLine();
+
+                Accounts currentUser = accountAppService.Authenticate(usernameInput, passwordInput);
+
+                bool isMatched; 
+
+                if (currentUser == null)
+                {
+                    isMatched = false;
+                    string role = "null";
+                    AddAccessLogs(usernameInput, passwordInput, role, isMatched);
+                    Console.WriteLine("Invalid Login!");
+                    Console.WriteLine($"Attempts left: {2 - i}");
+                    continue;
+                }
+
+                Console.WriteLine($"Welcome {currentUser.Username}");
+
+
+                if (currentUser.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    isMatched = true;
+                    string role = currentUser.Role;
+                    AddAccessLogs(usernameInput, passwordInput, role, isMatched);
+                    adminMenuChoices();
+                }
+                else if (currentUser.Role.Equals("Employee", StringComparison.OrdinalIgnoreCase))
+                {
+                    isMatched = true;
+                    string role = currentUser.Role;
+                    AddAccessLogs(usernameInput, passwordInput, role, isMatched);
+                    showEmployeeCRUD();
+                }
+
+                return;
+            }
+            Console.WriteLine("Too many failed login attempts.");
+        }
+
+        static void adminMenuChoices()
+        {
+            Console.WriteLine("========= Admin Menu =========");
+            Console.WriteLine("Choices:");
+            Console.WriteLine("[1] Employee Account Management");
+            Console.WriteLine("[2] Item Inventory Management");
+            Console.WriteLine("[3] Exit");
+            Console.Write("Choice: ");
+
+            int choice = Convert.ToInt16(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    showAdminEmpAccCRUD();
+                    break;
+                case 2:
+                    showAdminItemCRUD();
+                    break;
+                case 3:
+                    return;
+                default:
+                    Console.WriteLine("You have entered a choice that is not in the list, please try again.");
+                    break;
+            }
+        }
+
+        static void showAdminEmpAccCRUD()
+        {
+            //Add, View, Update, Delete Employees, Display Access Logs
+
+            bool running = true;
+
+            while (running)
+            {
+                Console.WriteLine("========= Admin Menu =========");
+                Console.WriteLine("Choices:");
+                Console.WriteLine("[1] Add Employee");
+                Console.WriteLine("[2] View Employees");
+                Console.WriteLine("[3] Update Employee Account");
+                Console.WriteLine("[4] Remove Employee");
+                Console.WriteLine("[5] Display Access Logs");
+                Console.WriteLine("[6] Exit");
+                Console.Write("Choice: ");
+
+                int choice = Convert.ToInt16(Console.ReadLine());
+
+
+                switch (choice)
+                {
+                    case 1:
+                        addEmployee();
+                        break;
+                    case 2:
+                        viewEmployees();
+                        break;
+                    case 3:
+                        updateEmployee();
+                        break;
+                    case 4:
+                        removeEmployee();
+                        break;
+                    case 5:
+                        displayLogs();
+                        break;
+                    case 6:
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("You have entered a choice that is not in the list, please try again.");
+                        break;
+                }
+            }
+               
+                
+        }
+
+        static void showAdminItemCRUD()
+        {
             //Create, Retrieve, Update, Delete Items
             //Item Notification for stocks of items < 5
 
+            bool isContinue = false;
+
             do
             {
+                Console.WriteLine("========= Admin Menu =========");
                 Console.WriteLine("Choices:");
                 Console.WriteLine("[1] Create new Item");
                 Console.WriteLine("[2] View all Items");
                 Console.WriteLine("[3] Search/Retrieve Item");
                 Console.WriteLine("[4] Update Item");
                 Console.WriteLine("[5] Delete Item");
+                Console.WriteLine("[6] Exit");
                 Console.Write("Choice: ");
 
                 int choice = Convert.ToInt16(Console.ReadLine());
@@ -50,6 +208,66 @@ namespace Grocery_System___Item_Inventory_Management
                     case 5:
                         deleteItems();
                         break;
+                    case 6:
+                        adminMenuChoices();
+                        break;
+                    default:
+                        Console.WriteLine("You have entered a choice that is not in the list, please try again.");
+                        break;
+                }
+                lowItemNotification();
+                Console.Write("Do you want to continue? y/n: ");
+                string choiceContinue = Console.ReadLine().ToUpper();
+                if (choiceContinue == "Y" || choiceContinue == "YES")
+                {
+                    isContinue = true;
+                }
+                else if (choiceContinue == "N" || choiceContinue == "NO")
+                {
+                    isContinue = false;
+                    Console.WriteLine("Going back to Admin Menu.");
+                    adminMenuChoices();
+                }
+                else
+                {
+                    Console.WriteLine("Wrong Input. Please try again.");
+                }
+            } while (isContinue);
+
+        }
+
+        static void showEmployeeCRUD()
+        {
+            //Retrieve & Update Items
+            //Item Notification for stocks of items < 5
+
+            bool isContinue = false;
+            do
+            {
+                Console.WriteLine("========= Menu =========");
+                Console.WriteLine("Choices:");
+                Console.WriteLine("[1] View all Items");
+                Console.WriteLine("[2] Search/Retrieve Item");
+                Console.WriteLine("[3] Update Item");
+                Console.WriteLine("[4] Exit");
+                Console.Write("Choice: ");
+
+                int choice = Convert.ToInt16(Console.ReadLine());
+
+
+                switch (choice)
+                {
+                    case 1:
+                        displayItems();
+                        break;
+                    case 2:
+                        searchItems();
+                        break;
+                    case 3:
+                        updateItems();
+                        break;
+                    case 4:
+                        return;
                     default:
                         Console.WriteLine("You have entered a choice that is not in the list, please try again.");
                         break;
@@ -71,9 +289,136 @@ namespace Grocery_System___Item_Inventory_Management
                     Console.WriteLine("Wrong Input. Please try again.");
                 }
             } while (isContinue);
+        }
+
+        static void addEmployee()
+        {
+            Console.WriteLine("Add Employee - Enter information");
+            Console.Write("Username: ");
+            string username = Console.ReadLine();
+            Console.Write("Password: ");
+            string password = Console.ReadLine();
+
+            Accounts newAccount = new Accounts { AccountID = Guid.NewGuid(), Username = username, Password = password, Role = "Employee" };
+
+            if (accountAppService.ValidateUsername(newAccount))
+            {
+                accountAppService.Register(newAccount);
+            }
+            else
+            {
+                Console.WriteLine("User already exists.");
+            }
+        }
+
+        static void viewEmployees()
+        {
+            Console.WriteLine("Employee List:");
+
+            var accounts = accountAppService.GetAccounts();
+
+            foreach (var acc in accounts)
+            {
+                Console.WriteLine($"ID: {acc.AccountID}, Username: {acc.Username}, Password: {acc.Password}");
+            }
 
         }
 
+        static void updateEmployee()
+        {
+            Console.WriteLine("Update Employee Account - Select what to update");
+            Console.WriteLine("Choices: ");
+            Console.WriteLine("[1] Username");
+            Console.WriteLine("[2] Password");
+            Console.WriteLine("[3] Exit");
+            Console.Write("Choice: ");
+
+            int choice = Convert.ToInt16(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    updateEmployeeUsername();
+                    break;
+                case 2:
+                    updateEmployeePassword();
+                    break;
+                case 3:
+                    showAdminEmpAccCRUD();
+                    break;
+                default:
+                    Console.WriteLine("You have entered a choice that is not in the list, please try again.");
+                    break;
+            }
+        }
+
+        static void updateEmployeeUsername()
+        {
+            Console.Write("Enter the username of the employee you want to update: ");
+            string username = Console.ReadLine();
+            bool isMatched = accountAppService.GetUsername(username);
+
+            if(isMatched)
+            {
+                Console.Write("Enter new username: ");
+                string newUsername = Console.ReadLine();
+                accountAppService.UpdateUsername(username, newUsername);
+                Console.WriteLine("Successfully updated!");
+            }
+
+        }
+
+        static void updateEmployeePassword()
+        {
+            Console.Write("Enter the username of the employee you want to update: ");
+            string username = Console.ReadLine();
+            bool isMatched = accountAppService.GetUsername(username);
+
+            if (isMatched)
+            {
+                Console.Write("Enter new password: ");
+                string newPassword = Console.ReadLine();
+                accountAppService.UpdatePassword(username, newPassword);
+                Console.WriteLine("Successfully updated!");
+            }
+        }
+
+        static void removeEmployee()
+        {
+            Console.Write("Enter the username of the employee you want to remove: ");
+            string username = Console.ReadLine();
+            bool isMatched = accountAppService.GetUsername(username);
+
+            if (isMatched)
+            {
+                accountAppService.RemoveEmployee(username);
+                Console.WriteLine("Successfully Removed Employee " + username);
+            }
+            else
+            {
+                Console.WriteLine("Employee does not exist.");
+            }
+        }
+
+        static void displayLogs()
+        {
+            Console.WriteLine("Access Logs:");
+
+            var accessLogs = accountAppService.GetAccessLogs();
+
+            foreach (var acc in accessLogs)
+            {
+                Console.WriteLine($"Username: {acc.Username}, Password: {acc.Password}, Status: {acc.Status}");
+            }
+        }
+
+        static void AddAccessLogs(string username, string password, string role, bool status)
+        {
+            AccessLogs accessLog = new AccessLogs() { Username = username, Password = password, Role = role, Status = status };
+            accountAppService.AddAccessLog(accessLog);
+        }
+
+        //CRUD Methods
         static void create_Item()
         {
             /* Create Item 
@@ -83,8 +428,7 @@ namespace Grocery_System___Item_Inventory_Management
                 Item_Location
             */
 
-            Console.Write("Item ID: ");
-            int item_id = Convert.ToInt16(Console.ReadLine());
+          
             Console.Write("Item Name: ");
             string item_name = Console.ReadLine();
             Console.Write("Item Quantity: ");
@@ -92,7 +436,7 @@ namespace Grocery_System___Item_Inventory_Management
             Console.Write("Item Location: ");
             string item_location = Console.ReadLine();
 
-            appService.addItems(item_id, item_name, item_quantity, item_location);
+            appService.addItems(item_name, item_quantity, item_location);
             Console.WriteLine("Item Added Successfuly!");
         }
 
@@ -109,32 +453,32 @@ namespace Grocery_System___Item_Inventory_Management
         static void searchItems()
         {
             Console.Write("Item ID: ");
-            int item_id = Convert.ToInt16(Console.ReadLine());
+            string item_id = Console.ReadLine();
 
             var item = appService.FindItem(item_id);
 
-            if (item != null)
-            {
-                Console.WriteLine($"Found Item: {item.ItemId} | {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation}");
-            }
-            else
+            if (item == null)
             {
                 Console.WriteLine("Item not found.");
+            } else {
+                Console.WriteLine($"Found Item: {item.ItemId} | {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation}"); 
             }
+            
         }
 
         static void updateItems()
         {
 
             Console.Write("Item ID: ");
-            int item_id = Convert.ToInt16(Console.ReadLine());
+            string item_id = Console.ReadLine();
 
-            
+
             var item = appService.FindItem(item_id);
-            Console.WriteLine($"Item Found: {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation} ");
+            
 
             if (item != null)
             {
+                Console.WriteLine($"Item Found: {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation} ");
                 Console.WriteLine("\nWhat do you want to update?");
                 Console.WriteLine("[1] Item Name");
                 Console.WriteLine("[2] Item Quantity");
@@ -173,7 +517,7 @@ namespace Grocery_System___Item_Inventory_Management
         static void deleteItems()
         {
             Console.Write("Item ID: ");
-            int item_id = Convert.ToInt16(Console.ReadLine());
+            string item_id = Console.ReadLine();
 
             bool deleted = appService.DeleteItem(item_id);
 
@@ -203,5 +547,6 @@ namespace Grocery_System___Item_Inventory_Management
             }
 
         }
+
     }
 }

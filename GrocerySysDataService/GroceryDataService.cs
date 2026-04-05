@@ -23,26 +23,26 @@ namespace GrocerySysDataService
             return _dataService.GetItems();
         }
 
-        public Items FindItem(int id)
+        public Items FindItem(string id)
         {
             return _dataService.FindItem(id);
         }
 
-        public bool UpdateItemName(int id, string newName)
+        public bool UpdateItemName(string id, string newName)
         {
            return _dataService.UpdateItemName(id, newName);
         }
 
-        public bool UpdateItemQuantity(int id, int? newQuantity)
+        public bool UpdateItemQuantity(string id, int? newQuantity)
         {
             return _dataService.UpdateItemQuantity(id, newQuantity);
         }
-        public bool UpdateItemLocation(int id, string newLocation)
+        public bool UpdateItemLocation(string id, string newLocation)
         {
             return _dataService.UpdateItemLocation(id, newLocation);
         }
 
-        public bool DeleteItem(int id)
+        public bool DeleteItem(string id)
         {
             return _dataService.DeleteItem(id);
         }

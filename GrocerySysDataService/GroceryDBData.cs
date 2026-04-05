@@ -25,9 +25,9 @@ namespace GrocerySysDataService
 
             if (existing.Count == 0)
             {
-                Items item1 = new Items { ItemId = 1, ItemName = "Apple", ItemQuantity = 6, ItemLocation = "Shelf A" };
-                Items item2 = new Items { ItemId = 2, ItemName = "Mango", ItemQuantity = 7, ItemLocation = "Shelf B" };
-                Items item3 = new Items { ItemId = 3, ItemName = "Orange", ItemQuantity = 8, ItemLocation = "Shelf C" };
+                Items item1 = new Items { ItemId = "0001", ItemName = "Apple", ItemQuantity = 6, ItemLocation = "Shelf A" };
+                Items item2 = new Items { ItemId = "0002", ItemName = "Mango", ItemQuantity = 7, ItemLocation = "Shelf B" };
+                Items item3 = new Items { ItemId = "0003", ItemName = "Orange", ItemQuantity = 8, ItemLocation = "Shelf C" };
 
                 AddItem(item1);
                 AddItem(item2);
@@ -63,7 +63,7 @@ namespace GrocerySysDataService
             {
                 Items item = new Items
                 {
-                    ItemId = int.Parse(reader["ItemId"].ToString()),
+                    ItemId = reader["ItemId"].ToString(),
                     ItemName = reader["ItemName"].ToString(),
                     ItemQuantity = int.Parse(reader["ItemQuantity"].ToString()),
                     ItemLocation = reader["ItemLocation"].ToString()
@@ -76,7 +76,7 @@ namespace GrocerySysDataService
             return items;
         }
 
-        public Items FindItem(int id)
+        public Items FindItem(string id)
         {
             string selectStatement = "SELECT ItemId, ItemName, ItemQuantity, ItemLocation FROM Items WHERE ItemId = @ItemId";
             SqlCommand selectCommand = new SqlCommand(selectStatement, sqlConnection);
@@ -90,7 +90,7 @@ namespace GrocerySysDataService
             {
                 item = new Items
                 {
-                    ItemId = int.Parse(reader["ItemId"].ToString()),
+                    ItemId = reader["ItemId"].ToString(),
                     ItemName = reader["ItemName"].ToString(),
                     ItemQuantity = int.Parse(reader["ItemQuantity"].ToString()),
                     ItemLocation = reader["ItemLocation"].ToString()
@@ -101,7 +101,7 @@ namespace GrocerySysDataService
             return item;
         }
 
-        public bool UpdateItemName(int id, string newName)
+        public bool UpdateItemName(string id, string newName)
         {
             if (string.IsNullOrWhiteSpace(newName))
                 return false;
@@ -118,7 +118,7 @@ namespace GrocerySysDataService
             return rowsAffected > 0;
         }
 
-        public bool UpdateItemQuantity(int id, int? newQuantity)
+        public bool UpdateItemQuantity(string id, int? newQuantity)
         {
             if (!newQuantity.HasValue)
                 return false; 
@@ -135,7 +135,7 @@ namespace GrocerySysDataService
             return rowsAffected > 0;
         }
 
-        public bool UpdateItemLocation(int id, string newLocation)
+        public bool UpdateItemLocation(string id, string newLocation)
         {
             if (string.IsNullOrWhiteSpace(newLocation))
                 return false;
@@ -152,7 +152,7 @@ namespace GrocerySysDataService
             return rowsAffected > 0;
         }
 
-        public bool DeleteItem(int id)
+        public bool DeleteItem(string id)
         {
             var item = FindItem(id);
             if (item == null)

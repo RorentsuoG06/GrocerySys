@@ -5,6 +5,7 @@ namespace GrocerySysDataService
     {
         public List<Items> itemList = new List<Items>();
 
+        //CRUD Methods
         public void AddItem(Items item)
         {
             itemList.Add(item);
@@ -15,12 +16,12 @@ namespace GrocerySysDataService
             return itemList;
         }
 
-        public Items FindItem(int id)
+        public Items FindItem(string id)
         {
-            return itemList.FirstOrDefault(x => x.ItemId == id);
+            return itemList.FirstOrDefault(x => x.ItemId.Equals(id));
         }
 
-        public bool UpdateItemName(int id, string newName)
+        public bool UpdateItemName(string id, string newName)
         {
             var item = FindItem(id);
 
@@ -36,7 +37,7 @@ namespace GrocerySysDataService
             return true;
         }
 
-        public bool UpdateItemQuantity(int id, int? newQuantity)
+        public bool UpdateItemQuantity(string id, int? newQuantity)
         {
             var item = FindItem(id);
 
@@ -52,7 +53,7 @@ namespace GrocerySysDataService
             return true;
         }
 
-        public bool UpdateItemLocation(int id, string newLocation)
+        public bool UpdateItemLocation(string id, string newLocation)
         {
             var item = FindItem(id);
 
@@ -67,7 +68,7 @@ namespace GrocerySysDataService
             return true;
         }
 
-        public bool DeleteItem(int id)
+        public bool DeleteItem(string id)
         {
             var item = FindItem(id);
 
@@ -79,5 +80,6 @@ namespace GrocerySysDataService
             itemList.Remove(item);
             return true;
         }
+
     }
 }
