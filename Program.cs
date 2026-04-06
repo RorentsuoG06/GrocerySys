@@ -63,7 +63,7 @@ namespace Grocery_System___Item_Inventory_Management
                 {
                     isMatched = false;
                     string role = "null";
-                    AddAccessLogs(usernameInput, passwordInput, role, isMatched);
+                    AddAccessLogs(usernameInput, role, isMatched);
                     Console.WriteLine("Invalid Login!");
                     Console.WriteLine($"Attempts left: {2 - i}");
                     continue;
@@ -76,14 +76,14 @@ namespace Grocery_System___Item_Inventory_Management
                 {
                     isMatched = true;
                     string role = currentUser.Role;
-                    AddAccessLogs(usernameInput, passwordInput, role, isMatched);
+                    AddAccessLogs(usernameInput, role, isMatched);
                     adminMenuChoices();
                 }
                 else if (currentUser.Role.Equals("Employee", StringComparison.OrdinalIgnoreCase))
                 {
                     isMatched = true;
                     string role = currentUser.Role;
-                    AddAccessLogs(usernameInput, passwordInput, role, isMatched);
+                    AddAccessLogs(usernameInput, role, isMatched);
                     showEmployeeCRUD();
                 }
 
@@ -101,7 +101,12 @@ namespace Grocery_System___Item_Inventory_Management
             Console.WriteLine("[3] Exit");
             Console.Write("Choice: ");
 
-            int choice = Convert.ToInt16(Console.ReadLine());
+            int choice;
+            if (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                return;
+            }
 
             switch (choice)
             {
@@ -137,8 +142,12 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("[6] Exit");
                 Console.Write("Choice: ");
 
-                int choice = Convert.ToInt16(Console.ReadLine());
-
+                int choice;
+                if (!int.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                    return;
+                }
 
                 switch (choice)
                 {
@@ -188,7 +197,12 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("[6] Exit");
                 Console.Write("Choice: ");
 
-                int choice = Convert.ToInt16(Console.ReadLine());
+                int choice;
+                if (!int.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                    return;
+                }
 
 
                 switch (choice)
@@ -252,8 +266,12 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("[4] Exit");
                 Console.Write("Choice: ");
 
-                int choice = Convert.ToInt16(Console.ReadLine());
-
+                int choice;
+                if (!int.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                    return;
+                }
 
                 switch (choice)
                 {
@@ -333,7 +351,12 @@ namespace Grocery_System___Item_Inventory_Management
             Console.WriteLine("[3] Exit");
             Console.Write("Choice: ");
 
-            int choice = Convert.ToInt16(Console.ReadLine());
+            int choice;
+            if (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                return;
+            }
 
             switch (choice)
             {
@@ -408,13 +431,13 @@ namespace Grocery_System___Item_Inventory_Management
 
             foreach (var acc in accessLogs)
             {
-                Console.WriteLine($"Username: {acc.Username}, Password: {acc.Password}, Status: {acc.Status}");
+                Console.WriteLine($"Username: {acc.Username}, Role: {acc.Role}, Status: {(acc.Status ? "Success" : "Failed")}");
             }
         }
 
-        static void AddAccessLogs(string username, string password, string role, bool status)
+        static void AddAccessLogs(string username, string role, bool status)
         {
-            AccessLogs accessLog = new AccessLogs() { Username = username, Password = password, Role = role, Status = status };
+            AccessLogs accessLog = new AccessLogs() { Username = username, Role = role, Status = status };
             accountAppService.AddAccessLog(accessLog);
         }
 
@@ -484,7 +507,12 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("[2] Item Quantity");
                 Console.WriteLine("[3] Item Location");
                 Console.Write("Choice: ");
-                int updateChoice = Convert.ToInt16(Console.ReadLine());
+                int updateChoice;
+                if (!int.TryParse(Console.ReadLine(), out updateChoice))
+                {
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                    return;
+                }
 
                 if (updateChoice == 1)
                 {
@@ -496,7 +524,20 @@ namespace Grocery_System___Item_Inventory_Management
                 {
                     Console.Write("New Item Quantity: ");
                     string quantityInput = Console.ReadLine();
-                    int? newQuantity = string.IsNullOrWhiteSpace(quantityInput) ? null : Convert.ToInt16(quantityInput);
+                    int? newQuantity = null;
+
+                    if (!string.IsNullOrWhiteSpace(quantityInput))
+                    {
+                        if (int.TryParse(quantityInput, out int parsedQty))
+                        {
+                            newQuantity = parsedQty;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid quantity.");
+                            return;
+                        }
+                    }
                     appService.UpdateItemQuantity(item_id, newQuantity);
                 }
                 else if (updateChoice == 3)
