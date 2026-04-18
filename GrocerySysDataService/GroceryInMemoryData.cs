@@ -81,5 +81,14 @@ namespace GrocerySysDataService
             return true;
         }
 
+        public List<Items> GetLowStockItems()
+        {
+            return itemList.Where(x => x.ItemQuantity < 5).ToList();
+        }
+
+        public bool HasLowStockItems()
+        {
+            return itemList.Any(x => x.ItemQuantity < 5);
+        }
     }
 }

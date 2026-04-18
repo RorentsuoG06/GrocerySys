@@ -12,7 +12,7 @@ namespace GrocerySysAppService
 
         public Accounts Authenticate(string username, string password)
         {
-            if (username == "admin" && password == "admin123!")
+            if (username == "admin")
             {
                 return dataService.GetAdmin(username, password);
             }

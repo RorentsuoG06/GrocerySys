@@ -20,5 +20,9 @@ namespace GrocerySysDataService
         public bool UpdateItemQuantity(string id, int? newQuantity);
 
         public bool UpdateItemLocation(string id, string newLocation);
+
+        public List<Items> GetLowStockItems();
+
+        public bool HasLowStockItems();
     }
 }

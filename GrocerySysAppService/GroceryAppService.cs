@@ -5,7 +5,7 @@ namespace GrocerySysAppService
 {
     public class GroceryAppService
     {
-        GroceryDataService dataService = new GroceryDataService(new GroceryDBData());
+        GroceryDataService dataService = new GroceryDataService(new GroceryJsonData());
         
         public void addItems(string name, int quantity, string location)
         {
@@ -19,6 +19,7 @@ namespace GrocerySysAppService
             item.ItemLocation = location;  
             dataService.AddItem(item);
         }
+
         public List<Items> GetItems()
         {
             return dataService.GetItems(); 
@@ -28,6 +29,7 @@ namespace GrocerySysAppService
         {
             return dataService.FindItem(id);
         }
+
         public bool UpdateItemName(string id, string newName)
         {
             return dataService.UpdateItemName(id, newName);
@@ -50,11 +52,12 @@ namespace GrocerySysAppService
 
         public List<Items> GetLowStockItems()
         {
-            return dataService.GetItems().Where(x => x.ItemQuantity < 5).ToList();
+            return dataService.GetLowStockItems();
         }
+
         public bool HasLowStockItems()
         {
-            return dataService.GetItems().Any(x => x.ItemQuantity < 5);
+            return dataService.HasLowStockItems();
         }
 
         public string GenerateItemId(List<Items> items)

@@ -50,6 +50,7 @@ namespace GrocerySysDataService
         {
             return employeeAccounts;
         }
+
         public bool UpdateUsername(string username, string newUsername)
         {
             var account = GetByUsername(username);

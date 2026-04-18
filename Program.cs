@@ -21,29 +21,42 @@ namespace Grocery_System___Item_Inventory_Management
             }
         }
 
+        //Login Function
         static bool LoginOption()
         {
-            bool isLogin = false;
-            Console.Write("Do you want to login? y/n: ");
-            string loginInput = Console.ReadLine();
-
-            switch (loginInput)
+            while (true)
             {
-                case "y":
-                    isLogin = true;
-                    break;
-                case "n":
-                    isLogin = false;
-                    Console.WriteLine("System Shutdown.");
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.WriteLine("Incorrect Input. The system will now exit.");
-                    Environment.Exit(0);
-                    break;
-            }
+                bool isLogin = false;
+                Console.Write("Do you want to login? [Y]|[N]: ");
+                string loginInput = Console.ReadLine().ToUpper();
 
-            return isLogin;
+                switch (loginInput)
+                {
+                    case "Y":
+                        isLogin = true;
+                        break;
+                    case "N":
+                        isLogin = false;
+                        Console.WriteLine("System Shutdown.");
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.Write("Incorrect Input. Would you like to try again? [Y]|[N]: ");
+                        string retry = Console.ReadLine().ToUpper();
+                        if (retry == "Y")
+                        {
+                            continue;
+                        }
+                        else if(retry == "N") 
+                        {
+                            Console.WriteLine("The System will now exit.");
+                            Environment.Exit(0);
+                        }
+                        break;
+                }
+
+                return isLogin;
+            }
         }
 
         static void Login()
@@ -92,35 +105,44 @@ namespace Grocery_System___Item_Inventory_Management
             Console.WriteLine("Too many failed login attempts.");
         }
 
+        //Menus
         static void adminMenuChoices()
         {
-            Console.WriteLine("========= Admin Menu =========");
-            Console.WriteLine("Choices:");
-            Console.WriteLine("[1] Employee Account Management");
-            Console.WriteLine("[2] Item Inventory Management");
-            Console.WriteLine("[3] Exit");
-            Console.Write("Choice: ");
 
-            int choice;
-            if (!int.TryParse(Console.ReadLine(), out choice))
-            {
-                Console.WriteLine("Invalid input. Please enter a number.");
-                return;
-            }
+            bool running = true;
 
-            switch (choice)
+            while (running)
             {
-                case 1:
-                    showAdminEmpAccCRUD();
-                    break;
-                case 2:
-                    showAdminItemCRUD();
-                    break;
-                case 3:
-                    return;
-                default:
-                    Console.WriteLine("You have entered a choice that is not in the list, please try again.");
-                    break;
+
+                Console.WriteLine("========= Admin Menu =========");
+                Console.WriteLine("Choices:");
+                Console.WriteLine("[1] Employee Account Management");
+                Console.WriteLine("[2] Item Inventory Management");
+                Console.WriteLine("[3] Exit");
+                Console.Write("Choice: ");
+
+                int choice;
+                if (!int.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                    continue;
+                }
+
+                switch (choice)
+                {
+                    case 1:
+                        showAdminEmpAccCRUD();
+                        break;
+                    case 2:
+                        showAdminItemCRUD();
+                        break;
+                    case 3:
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("You have entered a choice that is not in the list, please try again.");
+                        break;
+                }
             }
         }
 
@@ -146,7 +168,7 @@ namespace Grocery_System___Item_Inventory_Management
                 if (!int.TryParse(Console.ReadLine(), out choice))
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
-                    return;
+                    continue;
                 }
 
                 switch (choice)
@@ -158,7 +180,7 @@ namespace Grocery_System___Item_Inventory_Management
                         viewEmployees();
                         break;
                     case 3:
-                        updateEmployee();
+                        updateEmployeeAdmin();
                         break;
                     case 4:
                         removeEmployee();
@@ -174,8 +196,7 @@ namespace Grocery_System___Item_Inventory_Management
                         break;
                 }
             }
-               
-                
+
         }
 
         static void showAdminItemCRUD()
@@ -201,9 +222,8 @@ namespace Grocery_System___Item_Inventory_Management
                 if (!int.TryParse(Console.ReadLine(), out choice))
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
-                    return;
+                    continue;
                 }
-
 
                 switch (choice)
                 {
@@ -217,14 +237,15 @@ namespace Grocery_System___Item_Inventory_Management
                         searchItems();
                         break;
                     case 4:
+                        displayItems();
                         updateItems();
                         break;
                     case 5:
+                        displayItems();
                         deleteItems();
                         break;
                     case 6:
-                        adminMenuChoices();
-                        break;
+                        return;
                     default:
                         Console.WriteLine("You have entered a choice that is not in the list, please try again.");
                         break;
@@ -240,11 +261,12 @@ namespace Grocery_System___Item_Inventory_Management
                 {
                     isContinue = false;
                     Console.WriteLine("Going back to Admin Menu.");
-                    adminMenuChoices();
+                    return;
                 }
                 else
                 {
                     Console.WriteLine("Wrong Input. Please try again.");
+                    isContinue = true;
                 }
             } while (isContinue);
 
@@ -263,14 +285,15 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("[1] View all Items");
                 Console.WriteLine("[2] Search/Retrieve Item");
                 Console.WriteLine("[3] Update Item");
-                Console.WriteLine("[4] Exit");
+                Console.WriteLine("[4] Change Username/Password");
+                Console.WriteLine("[5] Exit");
                 Console.Write("Choice: ");
 
                 int choice;
                 if (!int.TryParse(Console.ReadLine(), out choice))
                 {
                     Console.WriteLine("Invalid input. Please enter a number.");
-                    return;
+                    continue;
                 }
 
                 switch (choice)
@@ -282,9 +305,14 @@ namespace Grocery_System___Item_Inventory_Management
                         searchItems();
                         break;
                     case 3:
+                        displayItems();
                         updateItems();
                         break;
                     case 4:
+                        updateEmployeeEmp();
+                        break;
+                    case 5:
+                        Console.WriteLine("Thank you for using our Grocery Item Management System.");
                         return;
                     default:
                         Console.WriteLine("You have entered a choice that is not in the list, please try again.");
@@ -305,10 +333,12 @@ namespace Grocery_System___Item_Inventory_Management
                 else
                 {
                     Console.WriteLine("Wrong Input. Please try again.");
+                    isContinue = true;
                 }
             } while (isContinue);
         }
 
+        //Admin Methods
         static void addEmployee()
         {
             Console.WriteLine("Add Employee - Enter information");
@@ -342,7 +372,7 @@ namespace Grocery_System___Item_Inventory_Management
 
         }
 
-        static void updateEmployee()
+        static void updateEmployeeAdmin()
         {
             Console.WriteLine("Update Employee Account - Select what to update");
             Console.WriteLine("Choices: ");
@@ -375,6 +405,39 @@ namespace Grocery_System___Item_Inventory_Management
             }
         }
 
+        static void updateEmployeeEmp()
+        {
+            Console.WriteLine("Update Employee Account - Select what to update");
+            Console.WriteLine("Choices: ");
+            Console.WriteLine("[1] Username");
+            Console.WriteLine("[2] Password");
+            Console.WriteLine("[3] Exit");
+            Console.Write("Choice: ");
+
+            int choice;
+            if (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                return;
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    updateEmployeeUsername();
+                    break;
+                case 2:
+                    updateEmployeePassword();
+                    break;
+                case 3:
+                    showEmployeeCRUD();
+                    break;
+                default:
+                    Console.WriteLine("You have entered a choice that is not in the list, please try again.");
+                    break;
+            }
+        }
+
         static void updateEmployeeUsername()
         {
             Console.Write("Enter the username of the employee you want to update: ");
@@ -387,6 +450,9 @@ namespace Grocery_System___Item_Inventory_Management
                 string newUsername = Console.ReadLine();
                 accountAppService.UpdateUsername(username, newUsername);
                 Console.WriteLine("Successfully updated!");
+            } else if (!isMatched)
+            {
+                Console.WriteLine("Username does not exist.");
             }
 
         }
@@ -403,6 +469,9 @@ namespace Grocery_System___Item_Inventory_Management
                 string newPassword = Console.ReadLine();
                 accountAppService.UpdatePassword(username, newPassword);
                 Console.WriteLine("Successfully updated!");
+            } else if (!isMatched)
+            {
+                Console.WriteLine("Username does not exist.");
             }
         }
 
@@ -423,6 +492,7 @@ namespace Grocery_System___Item_Inventory_Management
             }
         }
 
+        //Access Logs Functionality
         static void displayLogs()
         {
             Console.WriteLine("Access Logs:");
@@ -441,7 +511,7 @@ namespace Grocery_System___Item_Inventory_Management
             accountAppService.AddAccessLog(accessLog);
         }
 
-        //CRUD Methods
+        //Grocery CRUD Methods
         static void create_Item()
         {
             /* Create Item 
@@ -455,7 +525,12 @@ namespace Grocery_System___Item_Inventory_Management
             Console.Write("Item Name: ");
             string item_name = Console.ReadLine();
             Console.Write("Item Quantity: ");
-            int item_quantity = Convert.ToInt16(Console.ReadLine());
+            int item_quantity;
+                if (!int.TryParse(Console.ReadLine(), out item_quantity))
+                {
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                    return;
+                }
             Console.Write("Item Location: ");
             string item_location = Console.ReadLine();
 
@@ -465,12 +540,14 @@ namespace Grocery_System___Item_Inventory_Management
 
         static void displayItems()
         {
+            Console.WriteLine("======================================");
             Console.WriteLine("Current List of Items: ");
             var items = appService.GetItems();
             foreach (var item in items)
             {
                 Console.WriteLine($"Item ID: {item.ItemId} | Item Name: {item.ItemName} | Item Quantity: | {item.ItemQuantity} | Item Location: {item.ItemLocation}");
             }
+            Console.WriteLine("======================================");
         }
 
         static void searchItems()
@@ -492,7 +569,7 @@ namespace Grocery_System___Item_Inventory_Management
         static void updateItems()
         {
 
-            Console.Write("Item ID: ");
+            Console.Write("Enter Item ID: ");
             string item_id = Console.ReadLine();
 
 
@@ -530,10 +607,14 @@ namespace Grocery_System___Item_Inventory_Management
                     {
                         if (int.TryParse(quantityInput, out int parsedQty))
                         {
+                            if (parsedQty < 0)
+                            {
+                                Console.WriteLine("Quantity cannot be negative.");
+                                return;
+                            }
                             newQuantity = parsedQty;
                         }
-                        else
-                        {
+                        else                        {
                             Console.WriteLine("Invalid quantity.");
                             return;
                         }

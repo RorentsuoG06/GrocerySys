@@ -169,6 +169,43 @@ namespace GrocerySysDataService
             return rowsAffected > 0;
         }
 
-        
+        public List<Items> GetLowStockItems()
+        {
+            string selectStatement = "SELECT ItemId, ItemName, ItemQuantity, ItemLocation FROM Items WHERE ItemQuantity < 5";
+            SqlCommand selectCommand = new SqlCommand(selectStatement, sqlConnection);
+
+            sqlConnection.Open();
+            SqlDataReader reader = selectCommand.ExecuteReader();
+
+            List<Items> itemsList = new List<Items>();
+            while (reader.Read())
+            {
+                Items item = new Items
+                {
+                    ItemId = reader["ItemId"].ToString(),
+                    ItemName = reader["ItemName"].ToString(),
+                    ItemQuantity = int.Parse(reader["ItemQuantity"].ToString()),
+                    ItemLocation = reader["ItemLocation"].ToString()
+                };
+
+                itemsList.Add(item);
+            }
+
+            sqlConnection.Close();
+            return itemsList;
+        }
+
+        public bool HasLowStockItems()
+        {
+            string query = "SELECT COUNT(1) FROM Items WHERE ItemQuantity < 5";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
     }
 }

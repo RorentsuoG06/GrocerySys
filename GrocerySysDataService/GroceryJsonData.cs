@@ -120,6 +120,7 @@ namespace GrocerySysDataService
             }
             return true;
         }
+
         public bool DeleteItem(string id)
         {
             var item = FindItem(id);
@@ -132,6 +133,16 @@ namespace GrocerySysDataService
             itemList.Remove(item);
             SaveDataToJsonFile();
             return true;
+        }
+
+        public List<Items> GetLowStockItems()
+        {
+            return itemList.Where(x => x.ItemQuantity < 5).ToList();
+        }
+
+        public bool HasLowStockItems()
+        {
+            return itemList.Any(x => x.ItemQuantity < 5);
         }
     }
 }

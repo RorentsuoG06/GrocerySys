@@ -46,5 +46,15 @@ namespace GrocerySysDataService
         {
             return _dataService.DeleteItem(id);
         }
+
+        public List<Items> GetLowStockItems()
+        {
+            return _dataService.GetLowStockItems();
+        }
+
+        public bool HasLowStockItems()
+        {
+            return _dataService.HasLowStockItems();
+        }
     }
 }
