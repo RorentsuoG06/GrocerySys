@@ -134,6 +134,21 @@ namespace GrocerySysDataService
             return count > 0;
         }
 
+        public bool AccountExists(string username, string password)
+        {
+            using SqlConnection sqlConnection = new SqlConnection(connectionString);
+            sqlConnection.Open();
+
+            string query = "SELECT COUNT(*) FROM Account WHERE Username = @Username AND Password = @Password";
+
+            using SqlCommand command = new SqlCommand(query, sqlConnection);
+            command.Parameters.AddWithValue("@Username", username);
+            command.Parameters.AddWithValue("@Password", password);
+
+            int count = (int)command.ExecuteScalar();
+            return count > 0;
+        }
+
         public Accounts? GetByUsername(string username)
         {
             using SqlConnection sqlConnection = new SqlConnection(connectionString);

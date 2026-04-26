@@ -33,6 +33,11 @@ namespace GrocerySysDataService
             return _dataService.UsernameExists(username);
         }
 
+        public bool AccountExists(string username, string password)
+        {
+            return _dataService.AccountExists(username, password);
+        }
+
         public Accounts? GetByUsername(string username)
         {
             return _dataService.GetByUsername(username);

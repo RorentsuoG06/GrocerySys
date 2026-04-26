@@ -111,6 +111,11 @@ namespace GrocerySysDataService
             return employeeAccounts.Any(a => a.Username == username);
         }
 
+        public bool AccountExists(string username, string password)
+        {
+            return employeeAccounts.Any(a => a.Username == username && a.Password == password);
+        }
+
         public Accounts? GetByUsername(string username)
         {
             return employeeAccounts.FirstOrDefault(a => a.Username == username);

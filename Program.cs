@@ -423,11 +423,12 @@ namespace Grocery_System___Item_Inventory_Management
 
             switch (choice)
             {
+                
                 case 1:
-                    updateEmployeeUsername();
+                    updateEmployeeUsernameEmp();
                     break;
                 case 2:
-                    updateEmployeePassword();
+                    updateEmployeePasswordEmp();
                     break;
                 case 3:
                     showEmployeeCRUD();
@@ -475,6 +476,49 @@ namespace Grocery_System___Item_Inventory_Management
             }
         }
 
+        static void updateEmployeeUsernameEmp()
+        {
+            Console.Write("Enter your username: ");
+            string username = Console.ReadLine();
+            Console.Write("Enter your password: ");
+            string password = Console.ReadLine();
+            bool isMatched = accountAppService.ValidateAccount(username, password);
+
+            if (isMatched)
+            {
+                Console.Write("Enter new username: ");
+                string newUsername = Console.ReadLine();
+                accountAppService.UpdateUsername(username, newUsername);
+                Console.WriteLine("Successfully updated!");
+            }
+            else if (!isMatched)
+            {
+                Console.WriteLine("You may have entered the wrong username.");
+            }
+        }
+
+        static void updateEmployeePasswordEmp()
+        {
+            Console.Write("Enter your username: ");
+            string username = Console.ReadLine();
+            Console.Write("Enter your password: ");
+            string password = Console.ReadLine();
+            bool isMatched = accountAppService.ValidateAccount(username, password);
+
+            if (isMatched)
+            {
+                Console.Write("Enter new password: ");
+                string newPassword = Console.ReadLine();
+                accountAppService.UpdatePassword(username, newPassword);
+                Console.WriteLine("Successfully updated!");
+            }
+            else if (!isMatched)
+            {
+                Console.WriteLine("You may have entered the wrong username.");
+            }
+
+           
+        }
         static void removeEmployee()
         {
             Console.Write("Enter the username of the employee you want to remove: ");

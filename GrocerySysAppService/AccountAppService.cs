@@ -8,7 +8,7 @@ namespace GrocerySysAppService
 {
     public class AccountAppService
     {
-        AccountDataService dataService = new AccountDataService(new AccountDBData());
+        AccountDataService dataService = new AccountDataService(new AccountInMemoryData());
 
         public Accounts Authenticate(string username, string password)
         {
@@ -39,6 +39,14 @@ namespace GrocerySysAppService
             return true;
         }
 
+        public bool ValidateAccount(string username, string password)
+        {
+            if (dataService.AccountExists(username, password))
+            {
+                return true;
+            }
+            return false;
+        }
         public List<Accounts> GetAccounts()
         {
             return dataService.GetAccounts();

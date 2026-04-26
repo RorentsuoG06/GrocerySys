@@ -11,6 +11,7 @@ namespace GrocerySysDataService
         public Accounts GetEmployee(string username, string password);
         public Accounts GetAdmin(string username, string password);
         public bool UsernameExists(string username);
+        public bool AccountExists(string username, string password);
         public Accounts? GetByUsername(string username);
         public List<Accounts> GetAccounts();
         public bool UpdateUsername(string username, string newUsername);
