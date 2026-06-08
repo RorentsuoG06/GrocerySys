@@ -47,7 +47,7 @@ namespace Grocery_System___Item_Inventory_Management
                         {
                             continue;
                         }
-                        else if(retry == "N") 
+                        else if (retry == "N")
                         {
                             Console.WriteLine("The System will now exit.");
                             Environment.Exit(0);
@@ -70,7 +70,7 @@ namespace Grocery_System___Item_Inventory_Management
 
                 Accounts currentUser = accountAppService.Authenticate(usernameInput, passwordInput);
 
-                bool isMatched; 
+                bool isMatched;
 
                 if (currentUser == null)
                 {
@@ -423,7 +423,7 @@ namespace Grocery_System___Item_Inventory_Management
 
             switch (choice)
             {
-                
+
                 case 1:
                     updateEmployeeUsernameEmp();
                     break;
@@ -445,13 +445,14 @@ namespace Grocery_System___Item_Inventory_Management
             string username = Console.ReadLine();
             bool isMatched = accountAppService.GetUsername(username);
 
-            if(isMatched)
+            if (isMatched)
             {
                 Console.Write("Enter new username: ");
                 string newUsername = Console.ReadLine();
                 accountAppService.UpdateUsername(username, newUsername);
                 Console.WriteLine("Successfully updated!");
-            } else if (!isMatched)
+            }
+            else if (!isMatched)
             {
                 Console.WriteLine("Username does not exist.");
             }
@@ -470,7 +471,8 @@ namespace Grocery_System___Item_Inventory_Management
                 string newPassword = Console.ReadLine();
                 accountAppService.UpdatePassword(username, newPassword);
                 Console.WriteLine("Successfully updated!");
-            } else if (!isMatched)
+            }
+            else if (!isMatched)
             {
                 Console.WriteLine("Username does not exist.");
             }
@@ -517,7 +519,7 @@ namespace Grocery_System___Item_Inventory_Management
                 Console.WriteLine("You may have entered the wrong username.");
             }
 
-           
+
         }
         static void removeEmployee()
         {
@@ -558,40 +560,92 @@ namespace Grocery_System___Item_Inventory_Management
         //Grocery CRUD Methods
         static void create_Item()
         {
-            /* Create Item 
-                Item_ID
-                Item_Name
-                Item_Quantity
-                Item_Location
-            */
-
-          
             Console.Write("Item Name: ");
             string item_name = Console.ReadLine();
+
             Console.Write("Item Quantity: ");
             int item_quantity;
-                if (!int.TryParse(Console.ReadLine(), out item_quantity))
-                {
-                    Console.WriteLine("Invalid input. Please enter a number.");
-                    return;
-                }
+            if (!int.TryParse(Console.ReadLine(), out item_quantity) || item_quantity < 0)
+            {
+                Console.WriteLine("Invalid quantity input.");
+                return;
+            }
+
+            ProductDepartment department = PromptForDepartment();
+
+            Console.Write("Weight/Size Value: ");
+            double weightValue;
+            if (!double.TryParse(Console.ReadLine(), out weightValue) || weightValue < 0)
+            {
+                Console.WriteLine("Invalid weight/size input.");
+                return;
+            }
+
+            MeasurementUnit unit = PromptForUnit();
+
+            Console.Write("Cost Price: ");
+            decimal costPrice;
+            if (!decimal.TryParse(Console.ReadLine(), out costPrice) || costPrice < 0)
+            {
+                Console.WriteLine("Invalid cost price.");
+                return;
+            }
+
+            Console.Write("Selling Price: ");
+            decimal sellingPrice;
+            if (!decimal.TryParse(Console.ReadLine(), out sellingPrice) || sellingPrice < 0)
+            {
+                Console.WriteLine("Invalid selling price.");
+                return;
+            }
+
             Console.Write("Item Location: ");
             string item_location = Console.ReadLine();
 
-            appService.addItems(item_name, item_quantity, item_location);
-            Console.WriteLine("Item Added Successfuly!");
+            Console.Write("Expiration Date (yyyy-MM-dd) [Leave blank if None]: ");
+            string expiryInput = Console.ReadLine();
+            DateTime? expirationDate = null;
+            if (!string.IsNullOrWhiteSpace(expiryInput))
+            {
+                if (DateTime.TryParse(expiryInput, out DateTime tempDate))
+                {
+                    expirationDate = tempDate;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid date format. Proceeding with no expiration date.");
+                }
+            }
+
+            Items newItem = new Items
+            {
+                ItemName = item_name,
+                ItemQuantity = item_quantity,
+                Department = department,
+                WeightValue = weightValue,
+                Unit = unit,
+                CostPrice = costPrice,
+                SellingPrice = sellingPrice,
+                ItemLocation = item_location,
+                ExpirationDate = expirationDate
+            };
+
+            // Assuming a method signature that accepts the model item wrapper exists:
+            appService.addItems(newItem);
+            Console.WriteLine("Item Added Successfully!");
         }
 
         static void displayItems()
         {
-            Console.WriteLine("======================================");
+            Console.WriteLine("=================================================================================================");
             Console.WriteLine("Current List of Items: ");
             var items = appService.GetItems();
             foreach (var item in items)
             {
-                Console.WriteLine($"Item ID: {item.ItemId} | Item Name: {item.ItemName} | Item Quantity: | {item.ItemQuantity} | Item Location: {item.ItemLocation}");
+                string expiryStr = item.ExpirationDate.HasValue ? item.ExpirationDate.Value.ToString("yyyy-MM-dd") : "N/A";
+                Console.WriteLine($"ID: {item.ItemId} | Name: {item.ItemName} | Dept: {item.Department} | Qty: {item.ItemQuantity} | Size: {item.WeightValue} {item.Unit} | Cost: Php {item.CostPrice} | Price: Php {item.SellingPrice} | Loc: {item.ItemLocation} | Exp: {expiryStr}");
             }
-            Console.WriteLine("======================================");
+            Console.WriteLine("=================================================================================================");
         }
 
         static void searchItems()
@@ -604,30 +658,37 @@ namespace Grocery_System___Item_Inventory_Management
             if (item == null)
             {
                 Console.WriteLine("Item not found.");
-            } else {
-                Console.WriteLine($"Found Item: {item.ItemId} | {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation}"); 
             }
-            
+            else
+            {
+                string expiryStr = item.ExpirationDate.HasValue ? item.ExpirationDate.Value.ToString("yyyy-MM-dd") : "N/A";
+                Console.WriteLine($"Found Item: {item.ItemId} | {item.ItemName} | {item.Department} | Qty: {item.ItemQuantity} | {item.WeightValue} {item.Unit} | Price: {item.SellingPrice} | Loc: {item.ItemLocation} | Exp: {expiryStr}");
+            }
+
         }
 
         static void updateItems()
         {
-
             Console.Write("Enter Item ID: ");
             string item_id = Console.ReadLine();
 
-
             var item = appService.FindItem(item_id);
-            
 
             if (item != null)
             {
-                Console.WriteLine($"Item Found: {item.ItemName} | {item.ItemQuantity} | {item.ItemLocation} ");
+                Console.WriteLine($"Item Found: {item.ItemName} | Qty: {item.ItemQuantity} | Dept: {item.Department} | Loc: {item.ItemLocation} ");
                 Console.WriteLine("\nWhat do you want to update?");
                 Console.WriteLine("[1] Item Name");
                 Console.WriteLine("[2] Item Quantity");
-                Console.WriteLine("[3] Item Location");
+                Console.WriteLine("[3] Product Department");
+                Console.WriteLine("[4] Size / Weight Value");
+                Console.WriteLine("[5] Measurement Unit");
+                Console.WriteLine("[6] Cost Price");
+                Console.WriteLine("[7] Selling Price");
+                Console.WriteLine("[8] Item Location");
+                Console.WriteLine("[9] Expiration Date");
                 Console.Write("Choice: ");
+
                 int updateChoice;
                 if (!int.TryParse(Console.ReadLine(), out updateChoice))
                 {
@@ -635,49 +696,81 @@ namespace Grocery_System___Item_Inventory_Management
                     return;
                 }
 
-                if (updateChoice == 1)
+                switch (updateChoice)
                 {
-                    Console.Write("New Item Name: ");
-                    string newName = Console.ReadLine();
-                    appService.UpdateItemName(item_id, newName);
-                }
-                else if (updateChoice == 2)
-                {
-                    Console.Write("New Item Quantity: ");
-                    string quantityInput = Console.ReadLine();
-                    int? newQuantity = null;
-
-                    if (!string.IsNullOrWhiteSpace(quantityInput))
-                    {
-                        if (int.TryParse(quantityInput, out int parsedQty))
+                    case 1:
+                        Console.Write("New Item Name: ");
+                        string newName = Console.ReadLine();
+                        appService.UpdateItemName(item_id, newName);
+                        break;
+                    case 2:
+                        Console.Write("New Item Quantity: ");
+                        string quantityInput = Console.ReadLine();
+                        if (int.TryParse(quantityInput, out int parsedQty) && parsedQty >= 0)
                         {
-                            if (parsedQty < 0)
-                            {
-                                Console.WriteLine("Quantity cannot be negative.");
-                                return;
-                            }
-                            newQuantity = parsedQty;
+                            appService.UpdateItemQuantity(item_id, parsedQty);
                         }
-                        else                        {
-                            Console.WriteLine("Invalid quantity.");
-                            return;
+                        else
+                        {
+                            Console.WriteLine("Invalid quantity value.");
                         }
-                    }
-                    appService.UpdateItemQuantity(item_id, newQuantity);
+                        break;
+                    case 3:
+                          ProductDepartment newDept = PromptForDepartment();
+                          appService.UpdateItemDepartment(item_id, newDept); 
+                        break;
+                    case 4:
+                        Console.Write("New Weight Value: ");
+                        if (double.TryParse(Console.ReadLine(), out double parsedWeight) && parsedWeight >= 0)
+                        {
+                            appService.UpdateItemWeightValue(item_id, parsedWeight);
+                        }
+                        break;
+                    case 5:
+                            MeasurementUnit newUnit = PromptForUnit();
+                            appService.UpdateItemUnit(item_id, newUnit);
+                        break;
+                    case 6:
+                        Console.Write("New Cost Price: ");
+                        if (decimal.TryParse(Console.ReadLine(), out decimal parsedCost) && parsedCost >= 0)
+                        {
+                            appService.UpdateItemCostPrice(item_id, parsedCost);
+                        }
+                        break;
+                    case 7:
+                        Console.Write("New Selling Price: ");
+                        if (decimal.TryParse(Console.ReadLine(), out decimal parsedSale) && parsedSale >= 0)
+                        {
+                            appService.UpdateItemSellingPrice(item_id, parsedSale);
+                        }
+                        break;
+                    case 8:
+                        Console.Write("New Item Location: ");
+                        string newLocation = Console.ReadLine();
+                        appService.UpdateItemLocation(item_id, newLocation);
+                        break;
+                    case 9:
+                        Console.Write("New Expiration Date (yyyy-MM-dd) [Leave blank to clear]: ");
+                        string expInput = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(expInput))
+                        {
+                            appService.UpdateItemExpirationDate(item_id, null);
+                        }
+                        else if (DateTime.TryParse(expInput, out DateTime parsedDate))
+                        {
+                            appService.UpdateItemExpirationDate(item_id, parsedDate);
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        return;
                 }
-                else if (updateChoice == 3)
-                {
-                    Console.Write("New Item Location: ");
-                    string newLocation = Console.ReadLine();
-                    appService.UpdateItemLocation(item_id, newLocation);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid choice.");
-                    return;
-                }
+                Console.WriteLine("Item field update process completed.");
             }
-
+            else
+            {
+                Console.WriteLine("Item not found.");
+            }
         }
 
         static void deleteItems()
@@ -689,7 +782,7 @@ namespace Grocery_System___Item_Inventory_Management
 
             if (deleted)
             {
-                Console.WriteLine("Item sucessfully deleted.");
+                Console.WriteLine("Item successfully deleted.");
             }
             else
             {
@@ -711,8 +804,45 @@ namespace Grocery_System___Item_Inventory_Management
                     Console.WriteLine($"ID: {item.ItemId} | Name: {item.ItemName} | Qty: {item.ItemQuantity}");
                 }
             }
-
         }
 
+        // Helper Methods to handle Enum parsing cleanly
+        static ProductDepartment PromptForDepartment()
+        {
+            while (true)
+            {
+                Console.WriteLine("Select Product Department:");
+                var departments = Enum.GetValues(typeof(ProductDepartment));
+                for (int i = 0; i < departments.Length; i++)
+                {
+                    Console.WriteLine($"[{i}] {departments.GetValue(i)}");
+                }
+                Console.Write("Choice: ");
+                if (int.TryParse(Console.ReadLine(), out int choice) && choice >= 0 && choice < departments.Length)
+                {
+                    return (ProductDepartment)departments.GetValue(choice);
+                }
+                Console.WriteLine("Invalid layout selection. Try again.");
+            }
+        }
+
+        static MeasurementUnit PromptForUnit()
+        {
+            while (true)
+            {
+                Console.WriteLine("Select Measurement Unit:");
+                var units = Enum.GetValues(typeof(MeasurementUnit));
+                for (int i = 0; i < units.Length; i++)
+                {
+                    Console.WriteLine($"[{i}] {units.GetValue(i)}");
+                }
+                Console.Write("Choice: ");
+                if (int.TryParse(Console.ReadLine(), out int choice) && choice >= 0 && choice < units.Length)
+                {
+                    return (MeasurementUnit)units.GetValue(choice);
+                }
+                Console.WriteLine("Invalid unit selection. Try again.");
+            }
+        }
     }
 }

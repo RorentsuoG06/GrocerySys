@@ -1,28 +1,24 @@
 ﻿using GrocerySysModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GrocerySysDataService
 {
     public interface IGroceryDataService
     {
-        public void AddItem(Items item);
+        void AddItem(Items item);
+        List<Items> GetItems();
+        Items FindItem(string id);
+        bool DeleteItem(string id);
+        bool UpdateItemName(string id, string newName);
+        bool UpdateItemQuantity(string id, int? newQuantity);
+        bool UpdateItemLocation(string id, string newLocation);
+        bool UpdateItemDepartment(string id, ProductDepartment newDept);
+        bool UpdateItemWeightValue(string id, double newWeightValue);
+        bool UpdateItemUnit(string id, MeasurementUnit newUnit);
+        bool UpdateItemCostPrice(string id, decimal newCostPrice);
+        bool UpdateItemSellingPrice(string id, decimal newSellingPrice);
+        bool UpdateItemExpirationDate(string id, DateTime? newExpirationDate);
 
-        public List<Items> GetItems();
-
-        public Items FindItem(string id);
-
-        public bool DeleteItem(string id);
-
-        public bool UpdateItemName(string id, string newName);
-
-        public bool UpdateItemQuantity(string id, int? newQuantity);
-
-        public bool UpdateItemLocation(string id, string newLocation);
-
-        public List<Items> GetLowStockItems();
-
-        public bool HasLowStockItems();
+        List<Items> GetLowStockItems();
+        bool HasLowStockItems();
     }
 }
