@@ -17,9 +17,8 @@ namespace GrocerySysDataService
 
         private void AddSeeds()
         {
-            var existing = GetAccounts();
-
-            if (existing.Count == 0)
+            // Check for the admin user specifically
+            if (!UsernameExists("admin"))
             {
                 Accounts adminAccount = new Accounts
                 {
@@ -28,7 +27,12 @@ namespace GrocerySysDataService
                     Password = "admin123!",
                     Role = "Admin"
                 };
+                Add(adminAccount);
+            }
 
+            // Check for the emp user specifically
+            if (!UsernameExists("emp"))
+            {
                 Accounts employeeAccount = new Accounts
                 {
                     AccountID = Guid.NewGuid(),
@@ -36,8 +40,6 @@ namespace GrocerySysDataService
                     Password = "emp123!",
                     Role = "Employee"
                 };
-
-                Add(adminAccount);
                 Add(employeeAccount);
             }
         }

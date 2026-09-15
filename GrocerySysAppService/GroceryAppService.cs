@@ -7,16 +7,24 @@ namespace GrocerySysAppService
     {
         GroceryDataService dataService = new GroceryDataService(new GroceryDBData());
 
-        // Refactored to accept the fully structured Items object from the Program console
+        private readonly EmailService emailService;
+
+        public GroceryAppService(EmailService emailService)
+        {
+            this.emailService = emailService;
+        }
         public void addItems(Items item)
         {
             var items = dataService.GetItems();
-
-            // Auto-generate the sequential ID before saving
             string newId = GenerateItemId(items);
             item.ItemId = newId;
 
             dataService.AddItem(item);
+
+            if (!string.IsNullOrEmpty(item.ItemName))
+            {
+                emailService.SendItemNotification(item.ItemId, item.ItemName, "added");
+            }
         }
 
         public List<Items> GetItems()
@@ -38,11 +46,8 @@ namespace GrocerySysAppService
         {
             return dataService.UpdateItemQuantity(id, newQuantity);
         }
-
-        // New Update Methods for the expanded data fields
         public bool UpdateItemDepartment(string id, ProductDepartment newDept)
         {
-            // Assuming dataService has a matching implementation or generic save
             return dataService.UpdateItemDepartment(id, newDept);
         }
 
@@ -88,6 +93,14 @@ namespace GrocerySysAppService
 
         public bool HasLowStockItems()
         {
+            bool hasLowStock = dataService.HasLowStockItems();
+            var items = dataService.GetItems();
+            foreach (var item in items) {
+                if (item.ItemQuantity < 5) {
+                    emailService.SendItemNotification(item.ItemId, item.ItemName, "low stock");
+                }
+            }
+
             return dataService.HasLowStockItems();
         }
 

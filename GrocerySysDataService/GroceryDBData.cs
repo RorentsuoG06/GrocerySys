@@ -124,7 +124,6 @@ namespace GrocerySysDataService
             return ExecuteUpdate(updateStmt, new KeyValuePair<string, object>("@ItemLocation", newLocation), id);
         }
 
-        // New Field Implementations
         public bool UpdateItemDepartment(string id, ProductDepartment newDept)
         {
             string updateStmt = "UPDATE Items SET Department = @Department WHERE ItemId = @ItemId";
@@ -206,7 +205,6 @@ namespace GrocerySysDataService
             }
         }
 
-        // Helper method to keep your mapping DRY (Don't Repeat Yourself)
         private Items MapRowToItem(SqlDataReader reader)
         {
             return new Items
@@ -223,8 +221,6 @@ namespace GrocerySysDataService
                 ExpirationDate = reader["ExpirationDate"] == DBNull.Value ? null : (DateTime?)Convert.ToDateTime(reader["ExpirationDate"])
             };
         }
-
-        // Helper method to execute isolated update commands safely
         private bool ExecuteUpdate(string query, KeyValuePair<string, object> parameter, string id)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))

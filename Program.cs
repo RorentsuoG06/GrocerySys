@@ -1,14 +1,26 @@
-﻿using GrocerySysModels;
-using GrocerySysAppService;
+﻿using GrocerySysAppService;
+using GrocerySysModels;
+using Microsoft.Extensions.Configuration;
 
 namespace Grocery_System___Item_Inventory_Management
 {
     internal class Program
     {
-        static GroceryAppService appService = new GroceryAppService();
-        static AccountAppService accountAppService = new AccountAppService();
+        static GroceryAppService appService;
+        static AccountAppService accountAppService;
+
         static void Main(string[] args)
         {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            EmailService emailService = new EmailService(configuration);
+            appService = new GroceryAppService(emailService);
+            accountAppService = new AccountAppService(emailService);
+
+
             Console.WriteLine("Grocery System - Item Inventory Management");
 
             bool isLogin = LoginOption();

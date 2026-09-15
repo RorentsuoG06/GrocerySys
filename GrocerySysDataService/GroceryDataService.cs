@@ -41,7 +41,6 @@ namespace GrocerySysDataService
             return _dataService.UpdateItemLocation(id, newLocation);
         }
 
-        // Forwarding methods for the new fields down to the injected provider
         public bool UpdateItemDepartment(string id, ProductDepartment newDept)
         {
             return _dataService.UpdateItemDepartment(id, newDept);

@@ -2,14 +2,21 @@
 using GrocerySysModels;
 using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 using System.Text;
 
 namespace GrocerySysAppService
 {
     public class AccountAppService
     {
-        AccountDataService dataService = new AccountDataService(new AccountInMemoryData());
+        AccountDataService dataService = new AccountDataService(new AccountDBData());
 
+        private readonly EmailService emailService;
+
+        public AccountAppService(EmailService emailService)
+        {
+            this.emailService = emailService;
+        }
         public Accounts Authenticate(string username, string password)
         {
             if (username == "admin")
@@ -27,6 +34,12 @@ namespace GrocerySysAppService
             }
 
             dataService.Add(newAccount);
+
+            if (!string.IsNullOrEmpty(newAccount.Username))
+            {
+                emailService.SendAccountNotification(newAccount.Username, "account created");
+            }
+
             return true;
         }
 
@@ -70,7 +83,18 @@ namespace GrocerySysAppService
 
         public bool UpdatePassword(string username, string newPassword)
         {
-            return dataService.UpdatePassword(username, newPassword);
+            bool isUpdated = dataService.UpdatePassword(username, newPassword);
+
+            if (isUpdated)
+            {
+                var account = dataService.GetByUsername(username);
+                if (account != null)
+                {
+                    emailService.SendAccountNotification(account.Username, "password updated");
+                }
+            }
+
+            return isUpdated;
         }
 
         public bool RemoveEmployee(string username)
