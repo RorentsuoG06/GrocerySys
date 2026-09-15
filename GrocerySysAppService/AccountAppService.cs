@@ -37,7 +37,7 @@ namespace GrocerySysAppService
 
             if (!string.IsNullOrEmpty(newAccount.Username))
             {
-                emailService.SendAccountNotification(newAccount.Username, "account created");
+                emailService.SendAccountNotification(newAccount.Username, "added");
             }
 
             return true;
@@ -90,7 +90,7 @@ namespace GrocerySysAppService
                 var account = dataService.GetByUsername(username);
                 if (account != null)
                 {
-                    emailService.SendAccountNotification(account.Username, "password updated");
+                    emailService.SendAccountNotification(account.Username, "updated in relation to its password");
                 }
             }
 

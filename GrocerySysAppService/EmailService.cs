@@ -53,7 +53,7 @@ namespace GrocerySysAppService
         public void SendAccountNotification(string username, string action)
         {
             string subject = $"Account Alert: {action}";
-            string body = $"Hello {username},\n\nAn update occurred on your account: {action}.\n\nIf you did not initiate this change, please contact support immediately.";
+            string body = $"Hello {username},\n\n your account has been: {action} in the system.\n\nIf you did not initiate this change, please contact support immediately.";
 
             SendEmail(subject, body);
         }
